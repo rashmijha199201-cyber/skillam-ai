@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skillam AI</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f172a">
+<style>
+body{margin:0;font-family:Arial;background:#0f172a;color:white}
+header{padding:15px;text-align:center;background:#1e293b;font-size:20px}
+#chat{height:70vh;overflow-y:auto;padding:15px}
+.msg{margin:10px;padding:10px;border-radius:10px;max-width:75%}
+.user{background:#2563eb;margin-left:auto}
+.ai{background:#334155}
+footer{display:flex;padding:10px;background:#1e293b}
+input{flex:1;padding:10px;border-radius:5px;border:none}
+button{margin-left:5px;padding:10px;border:none;border-radius:5px}
+</style>
+</head>
+<body>
+
+<header>🤖 Skillam AI</header>
+<div id="chat"></div>
+
+<footer>
+<input id="input" placeholder="Ask Skillam AI...">
+<button onclick="send()">Send</button>
+</footer>
+
+<script>
+if("serviceWorker" in navigator){
+ navigator.serviceWorker.register("service-worker.js");
+}
+
+async function send(){
+ let input=document.getElementById("input");
+ let text=input.value;
+ if(!text) return;
+ chat.innerHTML+=`<div class="msg user">${text}</div>`;
+ input.value="";
+
+ let res=await fetch("https://YOUR_BACKEND_URL/chat",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({message:text})
+ });
+
+ let data=await res.json();
+ chat.innerHTML+=`<div class="msg ai">${data.reply}</div>`;
+ chat.scrollTop=chat.scrollHeight;
+}
+</script>
+
+</body>
+</html>
