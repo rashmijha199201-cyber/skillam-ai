@@ -2,14 +2,115 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Skillam AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="manifest" href="manifest.json">
+  <title>Skillam AI Chat</title>
+  <link rel="icon" href="logo.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f0f2f5;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header {
+      background-color: #5c4cff;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+    #chat {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .message {
+      max-width: 80%;
+      padding: 10px 15px;
+      border-radius: 15px;
+      word-wrap: break-word;
+    }
+    .user {
+      background-color: #5c4cff;
+      color: white;
+      align-self: flex-end;
+    }
+    .ai {
+      background-color: #e2e2e2;
+      color: black;
+      align-self: flex-start;
+    }
+    #inputArea {
+      display: flex;
+      border-top: 1px solid #ccc;
+      background: white;
+    }
+    #userInput {
+      flex: 1;
+      padding: 10px;
+      font-size: 1em;
+      border: none;
+      outline: none;
+    }
+    #sendBtn {
+      padding: 10px 20px;
+      background-color: #5c4cff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
 </head>
-<body style="font-family:sans-serif;text-align:center;padding:40px;">
-  <img src="logo.png" width="120"><br><br>
-  <h1>Skillam AI 🚀</h1>
-  <p>Your AI PWA is LIVE</p>
+<body>
+
+<header>Skillam AI 🚀</header>
+
+<div id="chat">
+  <!-- Messages will appear here -->
+</div>
+
+<div id="inputArea">
+  <input type="text" id="userInput" placeholder="Type your message..." />
+  <button id="sendBtn">Send</button>
+</div>
+
+<script>
+  const chat = document.getElementById('chat');
+  const userInput = document.getElementById('userInput');
+  const sendBtn = document.getElementById('sendBtn');
+
+  function addMessage(text, sender) {
+    const msg = document.createElement('div');
+    msg.classList.add('message', sender);
+    msg.textContent = text;
+    chat.appendChild(msg);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function handleSend() {
+    const text = userInput.value.trim();
+    if(!text) return;
+    addMessage(text, 'user');
+    userInput.value = '';
+
+    // Dummy AI response
+    setTimeout(() => {
+      addMessage("AI says: I received \"" + text + "\"", 'ai');
+    }, 500);
+  }
+
+  sendBtn.addEventListener('click', handleSend);
+  userInput.addEventListener('keypress', function(e){
+    if(e.key === 'Enter') handleSend();
+  });
+</script>
+
 </body>
 </html>
