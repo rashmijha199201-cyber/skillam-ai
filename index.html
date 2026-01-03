@@ -4,113 +4,68 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Skillam AI Chat</title>
-  <link rel="icon" href="logo.png">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background-color: #f0f2f5;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-    header {
-      background-color: #5c4cff;
-      color: white;
-      text-align: center;
-      padding: 15px 0;
-      font-size: 1.5em;
-      font-weight: bold;
-    }
-    #chat {
-      flex: 1;
-      padding: 15px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .message {
-      max-width: 80%;
-      padding: 10px 15px;
-      border-radius: 15px;
-      word-wrap: break-word;
-    }
-    .user {
-      background-color: #5c4cff;
-      color: white;
-      align-self: flex-end;
-    }
-    .ai {
-      background-color: #e2e2e2;
-      color: black;
-      align-self: flex-start;
-    }
-    #inputArea {
-      display: flex;
-      border-top: 1px solid #ccc;
-      background: white;
-    }
-    #userInput {
-      flex: 1;
-      padding: 10px;
-      font-size: 1em;
-      border: none;
-      outline: none;
-    }
-    #sendBtn {
-      padding: 10px 20px;
-      background-color: #5c4cff;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-    }
+    body { font-family: Arial, sans-serif; background: #f0f0f0; margin:0; padding:0; display:flex; flex-direction:column; height:100vh; }
+    .chat-container { flex:1; padding:10px; overflow-y:auto; }
+    .message { padding:8px 12px; margin:5px; border-radius:10px; max-width:80%; }
+    .user { background:#5b3bff; color:white; align-self:flex-end; }
+    .ai { background:#e0e0e0; align-self:flex-start; }
+    .input-container { display:flex; border-top:1px solid #ccc; }
+    input { flex:1; padding:10px; font-size:16px; border:none; }
+    button { padding:10px; background:#5b3bff; color:white; border:none; }
   </style>
 </head>
 <body>
 
-<header>Skillam AI 🚀</header>
+  <div class="chat-container" id="chat"></div>
 
-<div id="chat">
-  <!-- Messages will appear here -->
-</div>
+  <div class="input-container">
+    <input type="text" id="messageInput" placeholder="Type your message..." />
+    <button id="sendBtn">Send</button>
+  </div>
 
-<div id="inputArea">
-  <input type="text" id="userInput" placeholder="Type your message..." />
-  <button id="sendBtn">Send</button>
-</div>
+  <script>
+    // ✅ Replit backend URL
+    const backendUrl = "https://workspace.rashmijha199201.replit.app";
 
-<script>
-  const chat = document.getElementById('chat');
-  const userInput = document.getElementById('userInput');
-  const sendBtn = document.getElementById('sendBtn');
+    const chat = document.getElementById('chat');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
 
-  function addMessage(text, sender) {
-    const msg = document.createElement('div');
-    msg.classList.add('message', sender);
-    msg.textContent = text;
-    chat.appendChild(msg);
-    chat.scrollTop = chat.scrollHeight;
-  }
+    // Function to add message to chat
+    function addMessage(text, sender) {
+      const div = document.createElement('div');
+      div.classList.add('message', sender);
+      div.textContent = text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
 
-  function handleSend() {
-    const text = userInput.value.trim();
-    if(!text) return;
-    addMessage(text, 'user');
-    userInput.value = '';
+    // Function to send message
+    async function sendMessage() {
+      const msg = messageInput.value.trim();
+      if (!msg) return;
+      addMessage(msg, 'user');
+      messageInput.value = '';
 
-    // Dummy AI response
-    setTimeout(() => {
-      addMessage("AI says: I received \"" + text + "\"", 'ai');
-    }, 500);
-  }
+      try {
+        const res = await fetch(`${backendUrl}/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: msg })
+        });
+        const data = await res.json();
+        addMessage(data.response || "AI did not respond.", 'ai');
+      } catch (err) {
+        addMessage("Error: Could not reach backend.", 'ai');
+      }
+    }
 
-  sendBtn.addEventListener('click', handleSend);
-  userInput.addEventListener('keypress', function(e){
-    if(e.key === 'Enter') handleSend();
-  });
-</script>
+    sendBtn.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
 
 </body>
 </html>
